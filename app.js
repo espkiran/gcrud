@@ -16,8 +16,6 @@ const firebaseConfig = {
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
 
-
-
 // Firebase Configuration (Replace with your values)
 // const firebaseConfig = {
 //     apiKey: "YOUR_API_KEY",

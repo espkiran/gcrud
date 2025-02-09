@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -14,21 +13,46 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-// Firebase Configuration (Replace with your values)
+// Initialize Firestore
+const db = getFirestore(app);
+
+// Now you can use `db` to interact with Firestore
+
+
+
+// // Import the functions you need from the SDKs you need
+// import { initializeApp } from "firebase/app";
+// // TODO: Add SDKs for Firebase products that you want to use
+// // https://firebase.google.com/docs/web/setup#available-libraries
+
+// // Your web app's Firebase configuration
 // const firebaseConfig = {
-//     apiKey: "YOUR_API_KEY",
-//     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-//     projectId: "YOUR_PROJECT_ID",
-//     storageBucket: "YOUR_PROJECT_ID.appspot.com",
-//     messagingSenderId: "YOUR_SENDER_ID",
-//     appId: "YOUR_APP_ID"
-//   };
+//   apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
+//   authDomain: "mywebform-81b01.firebaseapp.com",
+//   projectId: "mywebform-81b01",
+//   storageBucket: "mywebform-81b01.firebasestorage.app",
+//   messagingSenderId: "284178824887",
+//   appId: "1:284178824887:web:b34bd1bd101aa67404d732"
+// };
+
+// // Initialize Firebase
+// // const app = initializeApp(firebaseConfig);
+
+// // Firebase Configuration (Replace with your values)
+// // const firebaseConfig = {
+// //     apiKey: "YOUR_API_KEY",
+// //     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+// //     projectId: "YOUR_PROJECT_ID",
+// //     storageBucket: "YOUR_PROJECT_ID.appspot.com",
+// //     messagingSenderId: "YOUR_SENDER_ID",
+// //     appId: "YOUR_APP_ID"
+// //   };
   
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+//   // Initialize Firebase
+//   const app = firebase.initializeApp(firebaseConfig);
+//   const db = firebase.firestore();
   
   // Form Submit Handler
   document.getElementById('userForm').addEventListener('submit', async (e) => {

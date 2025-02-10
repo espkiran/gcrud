@@ -14,7 +14,7 @@ import {
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
-  authDomain: "mywebform-81b01.firebaseapp.com",
+  authDomain: "mywebform-81b01.firebaseapp.com", 
   projectId: "mywebform-81b01",
   storageBucket: "mywebform-81b01.firebasestorage.app",
   messagingSenderId: "284178824887",
@@ -23,77 +23,61 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Initialize Firestore
 const db = getFirestore(app);
 
-// Form Submit Handler
-document.getElementById('userForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
-  const age = document.getElementById('age').value;
-  const userId = document.getElementById('userId').value;
-
-  if (userId) {
-    // Update existing user
-    await updateDoc(doc(db, 'users', userId), { name, email, age });
-  } else {
-    // Create new user
-    await addDoc(collection(db, 'users'), { name, email, age });
+// Create new document
+export async function createDoc(collectionName, data) {
+  try {
+    const docRef = await addDoc(collection(db, collectionName), data);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating document:", error);
+    throw error;
   }
+}
 
-  resetForm();
-  loadUsers();
-});
+// Read document
+export async function readDoc(collectionName, docId) {
+  try {
+    const docRef = doc(db, collectionName, docId);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? docSnap.data() : null;
+  } catch (error) {
+    console.error("Error reading document:", error);
+    throw error;
+  }
+}
 
-// Read Data (Realtime Listener)
-function loadUsers() {
-  const usersCollection = collection(db, 'users');
-  onSnapshot(usersCollection, (snapshot) => {
-    let html = '';
-    snapshot.forEach((doc) => {
-      const user = doc.data();
-      html += `
-        <tr>
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>${user.age}</td>
-          <td>
-            <button onclick="editUser('${doc.id}')" class="btn btn-sm btn-warning">Edit</button>
-            <button onclick="deleteUser('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
-          </td>
-        </tr>
-      `;
-    });
-    document.getElementById('usersList').innerHTML = html;
+// Update document
+export async function updateDocument(collectionName, docId, data) {
+  try {
+    const docRef = doc(db, collectionName, docId);
+    await updateDoc(docRef, data);
+    return true;
+  } catch (error) {
+    console.error("Error updating document:", error);
+    throw error;
+  }
+}
+
+// Delete document
+export async function deleteDocument(collectionName, docId) {
+  try {
+    await deleteDoc(doc(db, collectionName, docId));
+    return true;
+  } catch (error) {
+    console.error("Error deleting document:", error);
+    throw error;
+  }
+}
+
+// Real-time collection listener
+export function subscribeToCollection(collectionName, callback) {
+  return onSnapshot(collection(db, collectionName), (snapshot) => {
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    callback(data);
   });
 }
-
-// Edit User
-async function editUser(id) {
-  const userDoc = doc(db, 'users', id);
-  const docSnap = await getDoc(userDoc);
-  const user = docSnap.data();
-  document.getElementById('userId').value = id;
-  document.getElementById('name').value = user.name;
-  document.getElementById('email').value = user.email;
-  document.getElementById('age').value = user.age;
-}
-
-// Delete User
-async function deleteUser(id) {
-  if (confirm('Are you sure?')) {
-    await deleteDoc(doc(db, 'users', id));
-  }
-}
-
-// Reset Form
-function resetForm() {
-  document.getElementById('userId').value = '';
-  document.getElementById('userForm').reset();
-}
-
-// Initial Load
-loadUsers();

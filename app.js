@@ -1,6 +1,14 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore";
+// Import Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,7 +29,7 @@ const db = getFirestore(app);
 // Form Submit Handler
 document.getElementById('userForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  
+
   const name = document.getElementById('name').value;
   const email = document.getElementById('email').value;
   const age = document.getElementById('age').value;
@@ -87,6 +95,4 @@ function resetForm() {
 }
 
 // Initial Load
-loadUsers();  
-  
-  
+loadUsers();

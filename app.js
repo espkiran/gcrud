@@ -1,9 +1,16 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+// Import Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// Your web app's Firebase configuration and added the Firestore module to the import statement
-
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
   authDomain: "mywebform-81b01.firebaseapp.com",
@@ -22,7 +29,7 @@ const db = getFirestore(app);
 // Form Submit Handler
 document.getElementById('userForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  
+
   const name = document.getElementById('name').value;
   const email = document.getElementById('email').value;
   const age = document.getElementById('age').value;
@@ -30,10 +37,10 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
 
   if (userId) {
     // Update existing user
-    await db.collection('users').doc(userId).update({ name, email, age });
+    await updateDoc(doc(db, 'users', userId), { name, email, age });
   } else {
     // Create new user
-    await db.collection('users').add({ name, email, age });
+    await addDoc(collection(db, 'users'), { name, email, age });
   }
 
   resetForm();
@@ -42,7 +49,8 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
 
 // Read Data (Realtime Listener)
 function loadUsers() {
-  db.collection('users').onSnapshot((snapshot) => {
+  const usersCollection = collection(db, 'users');
+  onSnapshot(usersCollection, (snapshot) => {
     let html = '';
     snapshot.forEach((doc) => {
       const user = doc.data();
@@ -58,14 +66,15 @@ function loadUsers() {
         </tr>
       `;
     });
-    document.getElementById('userList').innerHTML = html;
+    document.getElementById('usersList').innerHTML = html;
   });
 }
 
 // Edit User
 async function editUser(id) {
-  const doc = await db.collection('users').doc(id).get();
-  const user = doc.data();
+  const userDoc = doc(db, 'users', id);
+  const docSnap = await getDoc(userDoc);
+  const user = docSnap.data();
   document.getElementById('userId').value = id;
   document.getElementById('name').value = user.name;
   document.getElementById('email').value = user.email;
@@ -75,7 +84,7 @@ async function editUser(id) {
 // Delete User
 async function deleteUser(id) {
   if (confirm('Are you sure?')) {
-    await db.collection('users').doc(id).delete();
+    await deleteDoc(doc(db, 'users', id));
   }
 }
 

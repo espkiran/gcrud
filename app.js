@@ -10,6 +10,12 @@ import {
   onSnapshot,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
@@ -22,6 +28,19 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// // Your web app's Firebase configuration
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
+//   authDomain: "mywebform-81b01.firebaseapp.com",
+//   projectId: "mywebform-81b01",
+//   storageBucket: "mywebform-81b01.firebasestorage.app",
+//   messagingSenderId: "284178824887",
+//   appId: "1:284178824887:web:b34bd1bd101aa67404d732"
+// };
+
+// // Initialize Firebase
+// const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = getFirestore(app);

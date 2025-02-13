@@ -120,9 +120,9 @@ async function deleteUser(id) {
     await deleteDoc(doc(db, 'users', id));
   }
 }
-// At the end of your app.js file, add:
-window.editUser = editUser;
-window.deleteUser = deleteUser;
+// // At the end of your app.js file, add:
+// window.editUser = editUser;
+// window.deleteUser = deleteUser;
 
 // Reset Form
 function resetForm() {

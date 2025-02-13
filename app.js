@@ -132,8 +132,8 @@ function resetForm() {
 
   
   
-//   document.getElementById('userForm').reset();
-// }
+  document.getElementById('userForm').reset();
+}
 
-// // Initial Load
-// loadUsers();
+// Initial Load
+loadUsers();

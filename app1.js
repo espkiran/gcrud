@@ -42,7 +42,7 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
       // Add new user
       const docRef = await addDoc(collection(db, 'users'), { name, email, age });
       // Append the new user as a paragraph dynamically
-      const newParagraph = document.createElement('p');
+      const newParagraph = document.createElement('');
       newParagraph.setAttribute('data-id', docRef.id);
       newParagraph.textContent = `Name: ${name}, Email: ${email}, Age: ${age}`;
       document.getElementById('usersList').appendChild(newParagraph);
@@ -61,7 +61,7 @@ function loadUsers() {
       document.getElementById('usersList').innerHTML = ''; // Clear the list
       snapshot.forEach((doc) => {
         const user = doc.data();
-        const paragraph = document.createElement('p');
+        const paragraph = document.createElement('');
         paragraph.setAttribute('data-id', doc.id);
         paragraph.textContent = `Name: ${user.name}, Email: ${user.email}, Age: ${user.age}`;
         document.getElementById('usersList').appendChild(paragraph);

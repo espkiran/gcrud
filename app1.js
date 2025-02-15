@@ -39,11 +39,9 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
       let nextSerialNumber;
 
       if (!counterDoc.exists()) {
-        // Initialize the counter if it doesn't exist
         nextSerialNumber = 1;
         transaction.set(counterDocRef, { value: nextSerialNumber });
       } else {
-        // Increment the counter
         nextSerialNumber = counterDoc.data().value + 1;
         transaction.update(counterDocRef, { value: nextSerialNumber });
       }
@@ -52,12 +50,14 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
     });
 
     // Add the new user with the serial number
-    await addDoc(collection(db, 'users'), {
+    const docRef = await addDoc(collection(db, 'users'), {
       serialNumber: newSerialNumber,
       name,
       email,
       age,
     });
+
+    console.log("Document written with ID: ", docRef.id); // Debugging
 
     resetForm();
     loadUsers(); // Reload the users list after adding

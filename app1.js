@@ -40,7 +40,7 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
 
       if (!counterDoc.exists()) {
         // Initialize the counter if it doesn't exist
-        nextSerialNumber = 001;
+        nextSerialNumber = 1;
         transaction.set(counterDocRef, { value: nextSerialNumber });
       } else {
         // Increment the counter

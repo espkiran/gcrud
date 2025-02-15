@@ -49,6 +49,8 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
       return nextSerialNumber;
     });
 
+    console.log("Generated Serial Number:", newSerialNumber); // Debugging
+
     // Add the new user with the serial number
     const docRef = await addDoc(collection(db, 'users'), {
       serialNumber: newSerialNumber,
@@ -74,7 +76,7 @@ function loadUsers() {
       let combinedText = ''; // Combine all users into a single string
       snapshot.forEach((doc) => {
         const user = doc.data();
-        combinedText += `ID: ${user.serialNumber}, Name: ${user.name}, Email: ${user.email}, Age: ${user.age}\n`;
+        combinedText += `ID: ${user.serialNumber || doc.id}, Name: ${user.name}, Email: ${user.email}, Age: ${user.age}\n`;
       });
       document.getElementById('usersList').textContent = combinedText || 'No users found.';
     },

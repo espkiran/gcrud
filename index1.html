@@ -1,100 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
+  <title>Firebase Serial Number Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plain Format Form</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      padding: 0;
-      background-color: #f9f9f9;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    h1, h2 {
-      color: #333;
-      text-align: center;
-    }
-    form div {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #555;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="number"] {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    hr {
-      border: 0;
-      height: 1px;
-      background: #ccc;
-      margin: 20px 0;
-    }
-    #usersList p {
-      background: #f1f1f1;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-    }
-  </style>
 </head>
-<body>
-  <div class="container">
-    <h1>User Management</h1>
-    <form id="userForm" style="margin-top: 20px;">
-      <input type="hidden" id="userId">
-<!--       < id="userId"> -->
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f0f0f0;">
+  <div style="max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1)">
+    <h1 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">User Management</h1>
+    
+    <form id="userForm" style="margin-bottom: 30px;">
       <div style="margin-bottom: 15px;">
-        <label for="name" style="font-weight: bold; color: #555;">Name</label>
-        <input type="text" id="name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        <label style="display: block; margin-bottom: 5px; color: #666;">Name</label>
+        <input type="text" id="name" required 
+               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
       </div>
+      
       <div style="margin-bottom: 15px;">
-        <label for="email" style="font-weight: bold; color: #555;">Email</label>
-        <input type="email" id="email" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        <label style="display: block; margin-bottom: 5px; color: #666;">Email</label>
+        <input type="email" id="email" required 
+               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
       </div>
+      
       <div style="margin-bottom: 15px;">
-        <label for="age" style="font-weight: bold; color: #555;">Age</label>
-        <input type="number" id="age" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        <label style="display: block; margin-bottom: 5px; color: #666;">Age</label>
+        <input type="number" id="age" required 
+               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
       </div>
-      <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Submit</button>
+      
+      <button type="submit" 
+              style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+        Submit
+      </button>
     </form>
-    <hr>
-    <h2>Users List</h2>
-    <div id="usersList" style="margin-top: 20px;"></div>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    
+    <h2 style="color: #333; margin-bottom: 15px;">Users List</h2>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <thead>
+        <tr style="background-color: #f8f9fa;">
+          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Serial No.</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Name</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Email</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Age</th>
+          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersList"></tbody>
+    </table>
   </div>
-  <!-- Import Firebase SDK -->
-  <script type="module" src="app1.js"></script>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>

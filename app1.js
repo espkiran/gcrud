@@ -39,9 +39,11 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
       let nextSerialNumber;
 
       if (!counterDoc.exists()) {
+        // Initialize the counter if it doesn't exist
         nextSerialNumber = 1;
         transaction.set(counterDocRef, { value: nextSerialNumber });
       } else {
+        // Increment the counter
         nextSerialNumber = counterDoc.data().value + 1;
         transaction.update(counterDocRef, { value: nextSerialNumber });
       }
@@ -52,14 +54,12 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
     console.log("Generated Serial Number:", newSerialNumber); // Debugging
 
     // Add the new user with the serial number
-    const docRef = await addDoc(collection(db, 'users'), {
+    await addDoc(collection(db, 'users'), {
       serialNumber: newSerialNumber,
       name,
       email,
       age,
     });
-
-    console.log("Document written with ID: ", docRef.id); // Debugging
 
     resetForm();
     loadUsers(); // Reload the users list after adding
@@ -76,7 +76,7 @@ function loadUsers() {
       let combinedText = ''; // Combine all users into a single string
       snapshot.forEach((doc) => {
         const user = doc.data();
-        combinedText += `ID: ${user.serialNumber || doc.id}, Name: ${user.name}, Email: ${user.email}, Age: ${user.age}\n`;
+        combinedText += `ID: ${user.serialNumber}, Name: ${user.name}, Email: ${user.email}, Age: ${user.age}\n`;
       });
       document.getElementById('usersList').textContent = combinedText || 'No users found.';
     },

@@ -22,8 +22,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-// Reference to the counter document
 const counterDocRef = doc(db, 'metadata', 'counter');
 
 document.getElementById('userForm').addEventListener('submit', async (e) => {
@@ -69,24 +67,37 @@ function loadUsers() {
 
     snapshot.forEach((doc) => {
       const user = doc.data();
-      const row = `
-        <tr>
-          <td>${user.serialNumber}</td>
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>${user.age}</td>
-          <td>
-            <button onclick="deleteUser('${doc.id}')" class="btn btn-danger btn-sm">Delete</button>
-          </td>
-        </tr>
+      const userDiv = document.createElement('div');
+      userDiv.style.margin = '10px 0';
+      userDiv.style.padding = '15px';
+      userDiv.style.border = '1px solid #ddd';
+      userDiv.style.borderRadius = '5px';
+
+      userDiv.innerHTML = `
+        <p style="margin: 5px 0;">
+          Serial number ${user.serialNumber}, 
+          Name: ${user.name}, 
+          Email: ${user.email}, 
+          Age: ${user.age}
+        </p>
+        <button onclick="deleteUser('${doc.id}')" 
+          style="padding: 5px 10px;
+                 background-color: #ff4444;
+                 color: white;
+                 border: none;
+                 border-radius: 3px;
+                 cursor: pointer;">
+          Delete
+        </button>
       `;
-      usersList.innerHTML += row;
+
+      usersList.appendChild(userDiv);
     });
   });
 }
 
 window.deleteUser = async (id) => {
-  if (confirm('Are you sure?')) {
+  if (confirm('Are you sure you want to delete this user?')) {
     try {
       await deleteDoc(doc(db, 'users', id));
     } catch (error) {

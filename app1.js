@@ -33,21 +33,12 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
     if (userId) {
       // Update existing user
       await updateDoc(doc(db, 'users', userId), { name, email, age });
-      // Find the paragraph and update it dynamically
-      const paragraph = document.querySelector(`p[data-id="${userId}"]`);
-      if (paragraph) {
-        paragraph.textContent = `Name: ${name}, Email: ${email}, Age: ${age}`;
-      }
     } else {
       // Add new user
-      const docRef = await addDoc(collection(db, 'users'), { name, email, age });
-      // Append the new user as a paragraph dynamically
-      const newParagraph = document.createElement('p');
-      newParagraph.setAttribute('data-id', docRef.id);
-      newParagraph.textContent = `Name: ${name}, Email: ${email}, Age: ${age}`;
-      document.getElementById('usersList').appendChild(newParagraph);
+      await addDoc(collection(db, 'users'), { name, email, age });
     }
     resetForm();
+    loadUsers(); // Reload the users list after adding or updating
   } catch (error) {
     console.error("Error saving data:", error);
     alert("Error saving data. Check console for details.");
@@ -58,14 +49,12 @@ function loadUsers() {
   const usersCollection = collection(db, 'users');
   onSnapshot(usersCollection, 
     (snapshot) => {
-      document.getElementById('usersList').innerHTML = ''; // Clear the list
+      let combinedText = ''; // Combine all users into a single string
       snapshot.forEach((doc) => {
         const user = doc.data();
-        const paragraph = document.createElement('p');
-        paragraph.setAttribute('data-id', doc.id);
-        paragraph.textContent = `Name: ${user.name}, Email: ${user.email}, Age: ${user.age}`;
-        document.getElementById('usersList').appendChild(paragraph);
+        combinedText += `ID: ${doc.id}, Name: ${user.name}, Email: ${user.email}, Age: ${user.age}\n`;
       });
+      document.getElementById('usersList').textContent = combinedText || 'No users found.';
     },
     (error) => {
       console.error("Error loading users:", error);
@@ -92,11 +81,7 @@ async function deleteUser(id) {
   if (confirm('Are you sure?')) {
     try {
       await deleteDoc(doc(db, 'users', id));
-      // Remove the paragraph dynamically
-      const paragraph = document.querySelector(`p[data-id="${id}"]`);
-      if (paragraph) {
-        paragraph.remove();
-      }
+      loadUsers(); // Reload the users list after deletion
     } catch (error) {
       console.error("Error deleting user:", error);
       alert("Error deleting user. Check console for details.");

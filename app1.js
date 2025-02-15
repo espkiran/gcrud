@@ -4,11 +4,11 @@ import {
   collection,
   addDoc,
   doc,
-  updateDoc,
   deleteDoc,
   onSnapshot,
-  getDoc,
   runTransaction,
+  query,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -33,36 +33,27 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
   const age = document.getElementById('age').value;
 
   try {
-    // Use a transaction to safely increment the counter
     const newSerialNumber = await runTransaction(db, async (transaction) => {
       const counterDoc = await transaction.get(counterDocRef);
-      let nextSerialNumber;
+      let nextSerialNumber = 1;
 
-      if (!counterDoc.exists()) {
-        nextSerialNumber = 1;
-        transaction.set(counterDocRef, { value: nextSerialNumber });
-      } else {
+      if (counterDoc.exists()) {
         nextSerialNumber = counterDoc.data().value + 1;
-        transaction.update(counterDocRef, { value: nextSerialNumber });
       }
 
+      transaction.set(counterDocRef, { value: nextSerialNumber });
       return nextSerialNumber;
     });
 
-    console.log("Generated Serial Number:", newSerialNumber); // Debugging
-
-    // Add the new user with the serial number
-    const docRef = await addDoc(collection(db, 'users'), {
+    await addDoc(collection(db, 'users'), {
       serialNumber: newSerialNumber,
       name,
       email,
       age,
+      createdAt: new Date()
     });
 
-    console.log("Document written with ID: ", docRef.id); // Debugging
-
     resetForm();
-    loadUsers(); // Reload the users list after adding
   } catch (error) {
     console.error("Error saving data:", error);
     alert("Error saving data. Check console for details.");
@@ -70,37 +61,44 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
 });
 
 function loadUsers() {
-  const usersCollection = collection(db, 'users');
-  onSnapshot(usersCollection, 
-    (snapshot) => {
-      let combinedText = ''; // Combine all users into a single string
-      snapshot.forEach((doc) => {
-        const user = doc.data();
-        combinedText += `ID: ${user.serialNumber || doc.id}, Name: ${user.name}, Email: ${user.email}, Age: ${user.age}\n`;
-      });
-      document.getElementById('usersList').textContent = combinedText || 'No users found.';
-    },
-    (error) => {
-      console.error("Error loading users:", error);
-      alert("Error loading data. Check console for details.");
-    }
-  );
+  const usersQuery = query(collection(db, 'users'), orderBy('serialNumber'));
+  
+  onSnapshot(usersQuery, (snapshot) => {
+    const usersList = document.getElementById('usersList');
+    usersList.innerHTML = '';
+
+    snapshot.forEach((doc) => {
+      const user = doc.data();
+      const row = `
+        <tr>
+          <td>${user.serialNumber}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.age}</td>
+          <td>
+            <button onclick="deleteUser('${doc.id}')" class="btn btn-danger btn-sm">Delete</button>
+          </td>
+        </tr>
+      `;
+      usersList.innerHTML += row;
+    });
+  });
 }
 
-async function deleteUser(id) {
+window.deleteUser = async (id) => {
   if (confirm('Are you sure?')) {
     try {
       await deleteDoc(doc(db, 'users', id));
-      loadUsers(); // Reload the users list after deletion
     } catch (error) {
       console.error("Error deleting user:", error);
       alert("Error deleting user. Check console for details.");
     }
   }
-}
+};
 
 function resetForm() {
   document.getElementById('userForm').reset();
 }
 
+// Initialize
 loadUsers();

@@ -200,3 +200,17 @@ loadUsers();
 // Expose functions to global scope
 window.editUser = editUser;
 window.deleteUser = deleteUser;
+
+
+html += `
+  <tr>
+    <td>${user.name}</td>
+    <td>${user.email}</td>
+    <td>${user.age}</td>
+    <td>${doc.id}</td> <!-- Display User ID -->
+    <td>
+      <button onclick="editUser('${doc.id}')" class="btn btn-sm btn-warning">Edit</button>
+      <button onclick="deleteUser('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
+    </td>
+  </tr>
+`;

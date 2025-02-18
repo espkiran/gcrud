@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firebase CRUD</title>
-   <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration Form</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container mt-5">
-    <h1>User Management</h1>
-      <form id="userForm">
+    <div class="container">
+        <h1>User Registration Form</h1>
+        <form id="userForm">
             <div class="form-group">
                 <label for="name">Full Name:</label>
                 <input type="text" id="name" required>
@@ -60,40 +60,15 @@
 
             <button type="submit">Submit</button>
         </form>
-<!--     <form id="userForm">
-      <input type="hidden" id="userId">
-      <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" class="form-control" id="name" required>
-      </div>
-      <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" required>
-      </div>
-      <div class="mb-3">
-        <label for="age" class="form-label">Age</label>
-        <input type="number" class="form-control" id="age" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form> -->
 
-    <hr>
+        <h2>Registered Users</h2>
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Search by name or mobile...">
+            <select id="userDropdown"></select>
+        </div>
+        <div id="usersList"></div>
+    </div>
 
-    <h2>Users List</h2>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Age</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="usersList"></tbody>
-    </table>
-  </div>
-
-  <!-- Import Firebase SDK -->
-  <script type="module" src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>

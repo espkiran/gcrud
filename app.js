@@ -112,6 +112,51 @@ function resetForm() {
   document.getElementById('userForm').reset();
 }
 
+document.getElementById('userForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const age = document.getElementById('age').value;
+  const mobile = document.getElementById('mobile').value;
+  const address = document.getElementById('address').value;
+  const income = document.getElementById('income').value;
+  const country = document.getElementById('country').value;
+  const city = document.getElementById('city').value;
+  const userId = document.getElementById('userId').value;
+
+  try {
+    if (userId) {
+      // Update existing user
+      await updateDoc(doc(db, 'users', userId), {
+        name,
+        email,
+        age,
+        mobile,
+        address,
+        income,
+        country,
+        city,
+      });
+    } else {
+      // Add new user
+      await addDoc(collection(db, 'users'), {
+        name,
+        email,
+        age,
+        mobile,
+        address,
+        income,
+        country,
+        city,
+      });
+    }
+    resetForm();
+    loadUsers(); // Reload the user list
+  } catch (error) {
+    console.error("Error saving data:", error);
+    alert("Error saving data. Check console for details.");
+  }
+});
 loadUsers();
 
 // Expose functions to global scope

@@ -1,58 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Firebase Serial Number Demo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration Form</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f0f0f0;">
-  <div style="max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1)">
-    <h1 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">User Management</h1>
-    
-    <form id="userForm" style="margin-bottom: 30px;">
-      <div style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px; color: #666;">Name</label>
-        <input type="text" id="name" required 
-               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-      </div>
-      
-      <div style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px; color: #666;">Email</label>
-        <input type="email" id="email" required 
-               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-      </div>
-      
-      <div style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px; color: #666;">Age</label>
-        <input type="number" id="age" required 
-               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
-      </div>
-      
-      <button type="submit" 
-              style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
-        Submit
-      </button>
-    </form>
+<body>
+    <div class="container">
+        <h1>User Registration Form</h1>
+        <form id="userForm">
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" required>
+            </div>
 
-    <h2 style="color: #333; margin-bottom: 15px;">Users List</h2>
-<div id="usersList" style="margin-top: 20px;"></div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" required>
+            </div>
 
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-    
-    <h2 style="color: #333; margin-bottom: 15px;">Users List</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-      <thead>
-        <tr style="background-color: #f8f9fa;">
-          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Serial No.</th>
-          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Name</th>
-          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Email</th>
-          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Age</th>
-          <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="usersList"></tbody>
-    </table>
-  </div>
+            <div class="form-group">
+                <label for="mobile">Mobile Number:</label>
+                <input type="tel" id="mobile" required>
+            </div>
 
-  <script type="module" src="app.js"></script>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea id="address" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="income">Monthly Income (NPR):</label>
+                <input type="number" id="income" required>
+            </div>
+
+            <div class="form-group">
+                <label for="country">Country:</label>
+                <select id="country" required>
+                    <option value="">Select Country</option>
+                    <option value="Nepal">Nepal</option>
+                    <option value="India">India</option>
+                    <option value="China">China</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="city">City (Nepal):</label>
+                <select id="city" required>
+                    <option value="">Select City</option>
+                    <option value="Kathmandu">Kathmandu</option>
+                    <option value="Pokhara">Pokhara</option>
+                    <option value="Lalitpur">Lalitpur</option>
+                    <option value="Bharatpur">Bharatpur</option>
+                    <option value="Birgunj">Birgunj</option>
+                </select>
+            </div>
+
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <h2>Registered Users</h2>
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Search by name or mobile...">
+            <select id="userDropdown"></select>
+        </div>
+        <div id="usersList"></div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>

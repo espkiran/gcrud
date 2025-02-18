@@ -74,16 +74,27 @@ function loadUsers() {
 async function editUser(id) {
   try {
     const userDoc = await getDoc(doc(db, 'users', id));
-    const user = userDoc.data();
-    document.getElementById('userId').value = id;
-    document.getElementById('name').value = user.name;
-    document.getElementById('email').value = user.email;
-    document.getElementById('age').value = user.age;
+    if (userDoc.exists()) {
+      const user = userDoc.data();
+      document.getElementById('userId').value = id;
+      document.getElementById('name').value = user.name || '';
+      document.getElementById('email').value = user.email || '';
+      document.getElementById('age').value = user.age || '';
+      document.getElementById('mobile').value = user.mobile || '';
+      document.getElementById('address').value = user.address || '';
+      document.getElementById('income').value = user.income || '';
+      document.getElementById('country').value = user.country || '';
+      document.getElementById('city').value = user.city || '';
+    } else {
+      console.error("User document does not exist.");
+      alert("Error: User not found.");
+    }
   } catch (error) {
     console.error("Error editing user:", error);
     alert("Error loading user data. Check console for details.");
   }
 }
+
 
 async function deleteUser(id) {
   if (confirm('Are you sure?')) {

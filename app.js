@@ -157,6 +157,44 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
     alert("Error saving data. Check console for details.");
   }
 });
+
+function loadUsers() {
+  const usersCollection = collection(db, 'users');
+  onSnapshot(usersCollection, 
+    (snapshot) => {
+      let html = '';
+      let dropdownHtml = '<option value="">Select a user...</option>';
+      snapshot.forEach((doc) => {
+        const user = doc.data();
+        html += `
+          <tr>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.age}</td>
+            <td>
+              <button onclick="editUser('${doc.id}')" class="btn btn-sm btn-warning">Edit</button>
+              <button onclick="deleteUser('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
+            </td>
+          </tr>
+        `;
+        dropdownHtml += `<option value="${doc.id}">${user.name} (${user.email})</option>`;
+      });
+      document.getElementById('usersList').innerHTML = html;
+      document.getElementById('userDropdown').innerHTML = dropdownHtml;
+    },
+    (error) => {
+      console.error("Error loading users:", error);
+      alert("Error loading data. Check console for details.");
+    }
+  );
+}
+
+function handleUserSelection() {
+  const selectedUserId = document.getElementById('userDropdown').value;
+  if (selectedUserId) {
+    editUser(selectedUserId);
+  }
+}
 loadUsers();
 
 // Expose functions to global scope

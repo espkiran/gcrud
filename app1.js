@@ -1,139 +1,114 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { 
-    getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
-    authDomain: "mywebform-81b01.firebaseapp.com",
-    projectId: "mywebform-81b01",
-    storageBucket: "mywebform-81b01.firebasestorage.app",
-    messagingSenderId: "284178824887",
-    appId: "1:284178824887:web:b34bd1bd101aa67404d732"
+  apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
+  authDomain: "mywebform-81b01.firebaseapp.com",
+  projectId: "mywebform-81b01",
+  storageBucket: "mywebform-81b01.firebasestorage.app",
+  messagingSenderId: "284178824887",
+  appId: "1:284178824887:web:b34bd1bd101aa67404d732"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-let selectedUserId = null;
-let allUsers = [];
+let currentEditId = null;
 
-// Form Submission
-document.getElementById('userForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const user = {
-        name: document.getElementById('name').value,
-        age: document.getElementById('age').value,
-        mobile: document.getElementById('mobile').value,
-        address: document.getElementById('address').value,
-        income: document.getElementById('income').value,
-        country: document.getElementById('country').value,
-        city: document.getElementById('city').value,
-        timestamp: new Date()
-    };
+// Form Submission Handler
+document.getElementById('save-later-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = {
+    // Personal Information
+    name: document.getElementById('fname').value,
+    age: document.getElementById('myage').value,
+    gender: document.getElementById('gender').value,
+    mobile: document.getElementById('vmob').innerText,
+    address: document.getElementById('pdist').value,
+    // Loan Details
+    loanAmount: document.getElementById('tcsh').value,
+    interestRate: document.getElementById('Lper').value,
+    // Add all other form fields similarly
+    timestamp: new Date()
+  };
 
-    try {
-        if(selectedUserId) {
-            // Update existing user
-            await updateDoc(doc(db, "users", selectedUserId), user);
-        } else {
-            // Add new user
-            await addDoc(collection(db, "users"), user);
-        }
-        document.getElementById('userForm').reset();
-        selectedUserId = null;
-        document.getElementById('userDropdown').value = '';
-    } catch (error) {
-        console.error("Error saving document: ", error);
+  try {
+    if (currentEditId) {
+      await updateDoc(doc(db, "loanApplications", currentEditId), formData);
+    } else {
+      await addDoc(collection(db, "loanApplications"), formData);
     }
+    resetForm();
+    loadApplications();
+  } catch (error) {
+    console.error("Error saving document: ", error);
+    alert("Error saving data. Check console for details.");
+  }
 });
 
-// Load users into dropdown and list
-const loadUsers = () => {
-    onSnapshot(collection(db, "users"), (snapshot) => {
-        allUsers = [];
-        let dropdownHtml = '<option value="">Select User to Edit</option>';
-        let listHtml = '';
-        
-        snapshot.forEach((doc) => {
-            const user = { id: doc.id, ...doc.data() };
-            allUsers.push(user);
-            
-            // For dropdown
-            dropdownHtml += `
-                <option value="${user.id}">${user.name} - ${user.mobile}</option>
-            `;
-
-            // For list
-            listHtml += `
-                <div class="user-item">
-                    <h3>${user.name}</h3>
-                    <p>Age: ${user.age}</p>
-                    <p>Mobile: ${user.mobile}</p>
-                    <p>Address: ${user.address}</p>
-                    <p>Income: NPR ${user.income}</p>
-                    <p>Location: ${user.city}, ${user.country}</p>
-                    <button onclick="deleteUser('${user.id}')">Delete</button>
-                </div>
-            `;
-        });
-
-        document.getElementById('userDropdown').innerHTML = dropdownHtml;
-        document.getElementById('usersList').innerHTML = listHtml;
+// Load Applications
+const loadApplications = () => {
+  const query = collection(db, "loanApplications");
+  
+  onSnapshot(query, (snapshot) => {
+    const applicationsList = document.getElementById('usersList');
+    applicationsList.innerHTML = '';
+    
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const applicationHTML = `
+        <div class="application-card">
+          <h3>${data.name}</h3>
+          <p>Loan Amount: NPR ${data.loanAmount}</p>
+          <p>Interest Rate: ${data.interestRate}%</p>
+          <button onclick="editApplication('${doc.id}')">Edit</button>
+          <button onclick="deleteApplication('${doc.id}')">Delete</button>
+        </div>
+      `;
+      applicationsList.innerHTML += applicationHTML;
     });
+  });
 };
 
-// Edit user selection
-document.getElementById('userDropdown').addEventListener('change', (e) => {
-    const userId = e.target.value;
-    if(!userId) {
-        document.getElementById('userForm').reset();
-        selectedUserId = null;
-        return;
-    }
+// Edit Application
+window.editApplication = async (id) => {
+  const docRef = doc(db, "loanApplications", id);
+  const docSnap = await getDoc(docRef);
+  
+  if(docSnap.exists()) {
+    const data = docSnap.data();
+    currentEditId = id;
     
-    const selectedUser = allUsers.find(user => user.id === userId);
-    if(selectedUser) {
-        document.getElementById('name').value = selectedUser.name;
-        document.getElementById('age').value = selectedUser.age;
-        document.getElementById('mobile').value = selectedUser.mobile;
-        document.getElementById('address').value = selectedUser.address;
-        document.getElementById('income').value = selectedUser.income;
-        document.getElementById('country').value = selectedUser.country;
-        document.getElementById('city').value = selectedUser.city;
-        selectedUserId = selectedUser.id;
-    }
-});
+    // Populate form fields
+    document.getElementById('fname').value = data.name;
+    document.getElementById('myage').value = data.age;
+    document.getElementById('gender').value = data.gender;
+    // Populate all other fields similarly
+    
+    window.scrollTo(0, 0);
+  }
+};
 
-// Search functionality
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filteredUsers = allUsers.filter(user => 
-        user.name.toLowerCase().includes(searchTerm) || 
-        user.mobile.includes(searchTerm)
-    );
+// Delete Application
+window.deleteApplication = async (id) => {
+  if(confirm('Delete this application?')) {
+    await deleteDoc(doc(db, "loanApplications", id));
+  }
+};
 
-    const filteredHtml = filteredUsers.map(user => `
-        <div class="user-item">
-            <h3>${user.name}</h3>
-            <p>Age: ${user.age}</p>
-            <p>Mobile: ${user.mobile}</p>
-            <p>Address: ${user.address}</p>
-            <p>Income: NPR ${user.income}</p>
-            <p>Location: ${user.city}, ${user.country}</p>
-            <button onclick="deleteUser('${user.id}')">Delete</button>
-        </div>
-    `).join('');
-
-    document.getElementById('usersList').innerHTML = filteredHtml;
-});
-
-// Delete User
-window.deleteUser = async (id) => {
-    if (confirm('Are you sure you want to delete this user?')) {
-        await deleteDoc(doc(db, "users", id));
-    }
+// Reset Form
+const resetForm = () => {
+  document.getElementById('save-later-form').reset();
+  currentEditId = null;
 };
 
 // Initial Load
-loadUsers();
+loadApplications();

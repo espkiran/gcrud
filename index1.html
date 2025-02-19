@@ -18,6 +18,21 @@
  </head>
 <body>
 
+    <div class="container">
+        <h1>User Registration Form</h1>
+<!--         <input type="hidden" id="userId"> -->
+
+<input type="text" id="userId" readonly>
+
+<!--         <input type="hidden" id="userId"> -->
+<span id="userIdDisplay"></span>
+
+<script>
+  // Assuming you have the userId value in a variable called 'userIdValue'
+  document.getElementById("userIdDisplay").textContent = userIdValue;
+  document.getElementById("userId").value = userIdValue; // Keep the hidden input updated
+</script>
+
   <form id="save-later-form" method="post">
   <input type="hidden" name="user_id" value="">
     <div class="container">

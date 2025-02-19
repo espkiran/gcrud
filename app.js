@@ -21,20 +21,31 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+let allUsers = [];
 
+// Form Submission
 document.getElementById('userForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
-  const age = document.getElementById('age').value;
+  const userData = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    age: document.getElementById('age').value,
+    mobile: document.getElementById('mobile').value,
+    address: document.getElementById('address').value,
+    income: document.getElementById('income').value,
+    country: document.getElementById('country').value,
+    city: document.getElementById('city').value,
+    timestamp: new Date()
+  };
+
   const userId = document.getElementById('userId').value;
 
   try {
     if (userId) {
-      await updateDoc(doc(db, 'users', userId), { name, email, age });
+      await updateDoc(doc(db, 'users', userId), userData);
     } else {
-      await addDoc(collection(db, 'users'), { name, email, age });
+      await addDoc(collection(db, 'users'), userData);
     }
     resetForm();
   } catch (error) {
@@ -43,174 +54,111 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
   }
 });
 
+// Load Users and populate dropdown
 function loadUsers() {
-  const usersCollection = collection(db, 'users');
-  onSnapshot(usersCollection, 
-    (snapshot) => {
-      let html = '';
-      snapshot.forEach((doc) => {
-        const user = doc.data();
-        html += `
-          <tr>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.age}</td>
-            <td>
-              <button onclick="editUser('${doc.id}')" class="btn btn-sm btn-warning">Edit</button>
-              <button onclick="deleteUser('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
-            </td>
-          </tr>
-        `;
-      });
-      document.getElementById('usersList').innerHTML = html;
-    },
-    (error) => {
-      console.error("Error loading users:", error);
-      alert("Error loading data. Check console for details.");
-    }
-  );
+  onSnapshot(collection(db, 'users'), (snapshot) => {
+    allUsers = [];
+    let usersHtml = '';
+    let dropdownHtml = '<option value="">Select a user</option>';
+
+    snapshot.forEach((doc) => {
+      const user = { id: doc.id, ...doc.data() };
+      allUsers.push(user);
+
+      // For users list
+      usersHtml += `
+        <div class="user-card">
+          <h3>${user.name}</h3>
+          <p>Email: ${user.email}</p>
+          <p>Age: ${user.age}</p>
+          <p>Mobile: ${user.mobile}</p>
+          <p>Address: ${user.address}</p>
+          <p>Income: NPR ${user.income}</p>
+          <p>Location: ${user.city}, ${user.country}</p>
+          <button onclick="editUser('${user.id}')">Edit</button>
+          <button onclick="deleteUser('${user.id}')">Delete</button>
+        </div>
+      `;
+
+      // For dropdown
+      dropdownHtml += `<option value="${user.id}">${user.name} (${user.mobile})</option>`;
+    });
+
+    document.getElementById('usersList').innerHTML = usersHtml;
+    document.getElementById('userDropdown').innerHTML = dropdownHtml;
+  });
 }
 
-async function editUser(id) {
+// Edit User
+window.editUser = async (id) => {
   try {
-    const userDoc = await getDoc(doc(db, 'users', id));
-    if (userDoc.exists()) {
-      const user = userDoc.data();
+    const docRef = doc(db, 'users', id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const user = docSnap.data();
       document.getElementById('userId').value = id;
-      document.getElementById('name').value = user.name || '';
-      document.getElementById('email').value = user.email || '';
-      document.getElementById('age').value = user.age || '';
-      document.getElementById('mobile').value = user.mobile || '';
-      document.getElementById('address').value = user.address || '';
-      document.getElementById('income').value = user.income || '';
-      document.getElementById('country').value = user.country || '';
-      document.getElementById('city').value = user.city || '';
-    } else {
-      console.error("User document does not exist.");
-      alert("Error: User not found.");
+      document.getElementById('name').value = user.name;
+      document.getElementById('email').value = user.email;
+      document.getElementById('age').value = user.age;
+      document.getElementById('mobile').value = user.mobile;
+      document.getElementById('address').value = user.address;
+      document.getElementById('income').value = user.income;
+      document.getElementById('country').value = user.country;
+      document.getElementById('city').value = user.city;
     }
   } catch (error) {
     console.error("Error editing user:", error);
-    alert("Error loading user data. Check console for details.");
+    alert("Error loading user data.");
   }
-}
+};
 
-
-async function deleteUser(id) {
-  if (confirm('Are you sure?')) {
+// Delete User
+window.deleteUser = async (id) => {
+  if (confirm('Are you sure you want to delete this user?')) {
     try {
       await deleteDoc(doc(db, 'users', id));
     } catch (error) {
       console.error("Error deleting user:", error);
-      alert("Error deleting user. Check console for details.");
+      alert("Error deleting user.");
     }
   }
-}
+};
 
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const searchTerm = e.target.value.toLowerCase();
+  const filteredUsers = allUsers.filter(user => 
+    user.name.toLowerCase().includes(searchTerm) ||
+    user.mobile.includes(searchTerm)
+  );
+
+  const filteredHtml = filteredUsers.map(user => `
+    <div class="user-card">
+      <h3>${user.name}</h3>
+      <p>Email: ${user.email}</p>
+      <p>Mobile: ${user.mobile}</p>
+      <p>Address: ${user.address}</p>
+      <button onclick="editUser('${user.id}')">Edit</button>
+      <button onclick="deleteUser('${user.id}')">Delete</button>
+    </div>
+  `).join('');
+
+  document.getElementById('usersList').innerHTML = filteredHtml;
+});
+
+// Handle dropdown selection
+document.getElementById('userDropdown').addEventListener('change', (e) => {
+  const userId = e.target.value;
+  if (userId) editUser(userId);
+});
+
+// Reset form
 function resetForm() {
   document.getElementById('userId').value = '';
   document.getElementById('userForm').reset();
+  document.getElementById('userDropdown').value = '';
 }
 
-document.getElementById('userForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
-  const age = document.getElementById('age').value;
-  const mobile = document.getElementById('mobile').value;
-  const address = document.getElementById('address').value;
-  const income = document.getElementById('income').value;
-  const country = document.getElementById('country').value;
-  const city = document.getElementById('city').value;
-  const userId = document.getElementById('userId').value;
-
-  try {
-    if (userId) {
-      // Update existing user
-      await updateDoc(doc(db, 'users', userId), {
-        name,
-        email,
-        age,
-        mobile,
-        address,
-        income,
-        country,
-        city,
-      });
-    } else {
-      // Add new user
-      await addDoc(collection(db, 'users'), {
-        name,
-        email,
-        age,
-        mobile,
-        address,
-        income,
-        country,
-        city,
-      });
-    }
-    resetForm();
-    loadUsers(); // Reload the user list
-  } catch (error) {
-    console.error("Error saving data:", error);
-    alert("Error saving data. Check console for details.");
-  }
-});
-
-function loadUsers() {
-  const usersCollection = collection(db, 'users');
-  onSnapshot(usersCollection, 
-    (snapshot) => {
-      let html = '';
-      let dropdownHtml = '<option value="">Select a user...</option>';
-      snapshot.forEach((doc) => {
-        const user = doc.data();
-        html += `
-          <tr>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.age}</td>
-            <td>
-              <button onclick="editUser('${doc.id}')" class="btn btn-sm btn-warning">Edit</button>
-              <button onclick="deleteUser('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
-            </td>
-          </tr>
-        `;
-        dropdownHtml += `<option value="${doc.id}">${user.name} (${user.email})</option>`;
-      });
-      document.getElementById('usersList').innerHTML = html;
-      document.getElementById('userDropdown').innerHTML = dropdownHtml;
-    },
-    (error) => {
-      console.error("Error loading users:", error);
-      alert("Error loading data. Check console for details.");
-    }
-  );
-}
-
-function handleUserSelection() {
-  const selectedUserId = document.getElementById('userDropdown').value;
-  if (selectedUserId) {
-    editUser(selectedUserId);
-  }
-}
+// Initial load
 loadUsers();
-
-// Expose functions to global scope
-window.editUser = editUser;
-window.deleteUser = deleteUser;
-
-
-html += `
-  <tr>
-    <td>${user.name}</td>
-    <td>${user.email}</td>
-    <td>${user.age}</td>
-    <td>${doc.id}</td> <!-- Display User ID -->
-    <td>
-      <button onclick="editUser('${doc.id}')" class="btn btn-sm btn-warning">Edit</button>
-      <button onclick="deleteUser('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
-    </td>
-  </tr>
-`;

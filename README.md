@@ -1,5 +1,2 @@
-# gcrud
-    crud how to work
-
-
-                        
+# brianmwevi.github.io
+My portfolio

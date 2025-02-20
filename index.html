@@ -21,79 +21,10 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>User Management</h1>
+ 
+    
 
-
-      
-    <!-- User Form -->
-    <form id="userForm">
-      <input type="hidden" id="userId"> <!-- Hidden field for user ID -->
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" required>
-      </div>
-      <div class="form-group">
-        <label for="age">Age:</label>
-        <input type="number" id="age" required>
-      </div>
-      <button type="submit" id="submitButton">Submit</button>
-    </form>
-
-    <hr>
-
-    <!-- Dropdown List -->
-    <h2>Select User</h2>
-    <select id="userDropdown">
-      <option value="">Select a user...</option>
-    </select>
-
-    <hr>
-
-    <!-- Users Table -->
-    <h2>Users List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Age</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="usersList"></tbody>
-    </table>
-  </div>
-
-  <!-- Import Firebase SDK -->
-
-<!-- Dropdown List -->
-    <h2>Select User</h2>
-    <select id="userDropdown" class="form-select mb-3"></select>
-
-    <hr>
-
-    <!-- Users Table -->
-    <h2>Users List</h2>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Age</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="usersList"></tbody>
-    </table>
-  </div>
-
+  
   <!-- Import Firebase SDK -->
   <script type="module" src="app.js"></script>
 
@@ -207,10 +138,92 @@
 
      <div class="containerd4">
         <div>
+         
+            <div class="container">
+    <h1>User Management</h1>
+
+
+      
+    <!-- User Form -->
+    <form id="userForm">
+      <input type="hidden" id="userId"> <!-- Hidden field for user ID -->
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label for="age">Age:</label>
+        <input type="number" id="age" required>
+      </div>
+      <button type="submit" id="submitButton">Submit</button>
+    </form>
+
+    <hr>
+            
             <input type="text" value="" name="date1" class="date-picker form-control">
             <span id="convert1a" style="cursor: pointer;">Convert1 => Loan Issue वा Renew गरेकाे मिति</span><h3>  </h3>
+        
+        
+        
         </div>
         <div>
+           
+            
+            
+              <!-- Dropdown List -->
+    <h2>Select User</h2>
+    <select id="userDropdown">
+      <option value="">Select a user...</option>
+    </select>
+
+    <hr>
+
+    <!-- Users Table -->
+    <h2>Users List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersList"></tbody>
+    </table>
+  </div>
+
+  <!-- Import Firebase SDK -->
+
+<!-- Dropdown List -->
+    <h2>Select User</h2>
+    <select id="userDropdown" class="form-select mb-3"></select>
+
+    <hr>
+
+    <!-- Users Table -->
+    <h2>Users List</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersList"></tbody>
+    </table>
+  </div>
+
+            
+            
             <input type="text" value="" name="date2" class="date-picker form-control" id="date2a" 
             placeholder="Loan Issue वा Renew गरेकाे मिति छान्नुहाेस">
             <span id="convert2a" style="cursor: pointer;">Convert2 => Loan Issue वा Renew गरेकाे मिति</span>

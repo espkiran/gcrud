@@ -1,11 +1,36 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 const firebaseConfig = {
-    apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
-    authDomain: "mywebform-81b01.firebaseapp.com",
-    projectId: "mywebform-81b01",
-    storageBucket: "mywebform-81b01.firebasestorage.app",
-    messagingSenderId: "284178824887",
-    appId: "1:284178824887:web:b34bd1bd101aa67404d732"
+  apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
+  authDomain: "mywebform-81b01.firebaseapp.com",
+  projectId: "mywebform-81b01",
+  storageBucket: "mywebform-81b01.firebasestorage.app",
+  messagingSenderId: "284178824887",
+  appId: "1:284178824887:web:b34bd1bd101aa67404d732"
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+let currentEditId = null;
+
+
+// const firebaseConfig = {
+//     apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
+//     authDomain: "mywebform-81b01.firebaseapp.com",
+//     projectId: "mywebform-81b01",
+//     storageBucket: "mywebform-81b01.firebasestorage.app",
+//     messagingSenderId: "284178824887",
+//     appId: "1:284178824887:web:b34bd1bd101aa67404d732"
+// };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();

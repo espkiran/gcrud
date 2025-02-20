@@ -23,8 +23,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Initialize Firestore
 const db = getFirestore(app);
 
 // Form Submit Handler
@@ -44,39 +42,42 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
       await addDoc(collection(db, 'users'), { name, email, age });
     }
     resetForm();
-    loadUsers(); // Reload the users list
+    loadUsers();
   } catch (error) {
     console.error("Error saving data:", error);
     alert("Error saving data. Check console for details.");
   }
 });
 
-// Read Data (Realtime Listener)
+// Load Users
 function loadUsers() {
   const usersCollection = collection(db, 'users');
   onSnapshot(usersCollection, (snapshot) => {
     let html = '';
+    let dropdownHtml = '<option value="">Select a user...</option>';
     snapshot.forEach((doc) => {
       const user = doc.data();
       html += `
         <tr>
+          <td>${doc.id}</td>
           <td>${user.name}</td>
           <td>${user.email}</td>
           <td>${user.age}</td>
           <td>
-            <button onclick="editUser('${doc.id}')" class="btn btn-sm btn-warning">Edit</button>
-            <button onclick="deleteUser('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
+            <button onclick="editUser('${doc.id}')" class="btn">Edit</button>
+            <button onclick="deleteUser('${doc.id}')" class="btn">Delete</button>
           </td>
         </tr>
       `;
+      dropdownHtml += `<option value="${doc.id}">${user.name} (${doc.id})</option>`;
     });
     document.getElementById('usersList').innerHTML = html;
+    document.getElementById('userDropdown').innerHTML = dropdownHtml;
   });
 }
 
 // Edit User
 async function editUser(id) {
-  console.log("Editing user with ID:", id); // Debugging line
   try {
     const userDoc = doc(db, 'users', id);
     const docSnap = await getDoc(userDoc);
@@ -98,12 +99,10 @@ async function editUser(id) {
 
 // Delete User
 async function deleteUser(id) {
-  console.log("Deleting user with ID:", id); // Debugging line
   if (confirm('Are you sure?')) {
     try {
-      const userDoc = doc(db, 'users', id);
-      await deleteDoc(userDoc);
-      loadUsers(); // Reload the users list
+      await deleteDoc(doc(db, 'users', id));
+      loadUsers();
     } catch (error) {
       console.error("Error deleting user:", error);
       alert("Error deleting user. Check console for details.");
@@ -116,6 +115,14 @@ function resetForm() {
   document.getElementById('userId').value = '';
   document.getElementById('userForm').reset();
 }
+
+// Handle User Selection from Dropdown
+document.getElementById('userDropdown').addEventListener('change', (e) => {
+  const selectedUserId = e.target.value;
+  if (selectedUserId) {
+    editUser(selectedUserId);
+  }
+});
 
 // Initial Load
 loadUsers();

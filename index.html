@@ -134,6 +134,105 @@
         टोखा -९, गोंगबु, काठमाडौं। <br />
         महोदय, <br /></br>
       </div>
+
+             <div class="item items6">
+      <div id="karjaSection">
+      
+    <table>
+       <tbody>
+            <tr>
+                <td>
+                    <label for="tcsh" style="font-size: 40px;">कर्जा रकम रु</label>
+                </td>
+                <td>
+                    <input type="number" id="tcsh" placeholder="0" oninput="limitInputLength(this, 9)" required style="font-size: 40px;">
+                </td></tr>
+                <tr><hr><span id="umob"></span> <span id="smob"></span></tr>
+                <tr>
+
+                <input type="number" id="aQmob" placeholder="0" oninput="limitInputLength(this, 35)" required style="font-size: 40px;">
+                               <td>
+                  <label for="Lper" style="font-size: 40px;"> Loan काे ब्याजदर </label>
+                </td>
+                <td>
+                  <input type="number" id="Lper" placeholder="0" oninput="limitInputLength(this, 5)" required style="font-size: 40px;">
+                </td></tr><tr>
+                <td>
+                  <label for="Qno" style="font-size: 40px;">माेबाइल न‌‍‍‍‍</label>
+                </td>
+                <td>
+                  <input type="text" id="Qno" oninput="limitInputLength(this, 35)" style="font-size: 40px;">
+                </td>
+              </tr>
+              <td colspan="3" style="font-size: 40px;">
+    <span id="convert" class="custom-button">Convert</span>
+</td>
+            </tr>
+            <div class="jquery-script-clear"></div>
+    </div>
+    </div>
+</head>
+
+<body>
+    <div class="containerd">
+        <div>
+            <input type="text" value="" name="date1" class="date-picker form-control" id="date1"
+             placeholder="Loan Issue वा Renew गरेकाे मिति छान्नुहाेस">
+            <span id="convert1" style="cursor: pointer;">Convert1 => Loan Issue वा Renew गरेकाे मिति</span><h3>  </h3>
+        </div>
+        <div>
+            <input type="text" value="" name="date2" class="date-picker form-control" id="date2" 
+            placeholder="Loan Issue वा Renew गरेकाे मिति छान्नुहाेस">
+            <span id="convert2" style="cursor: pointer;">Convert2 => Loan Issue वा Renew गरेकाे मिति</span>
+        </div></div>
+        <div class="containerd1">
+      <span id="t1date"></span><span id="t1fdate"></span> 
+    </div>
+    
+    <div class="containerd2">
+        <div>
+            <input type="text" value="" name= "date3" class="date-picker form-control" id="date3" 
+            placeholder="बचत खाता खाेलेकाे मिति वा खाता बनेकाे मिति छान्नुहाेस">
+           <span id="convert3" style="cursor: pointer;">Convert3 => बचत खाता खाेलेकाे मिति वा खाता बनेकाे मिति</span>
+        </div>
+        <div>
+            <input type="text" value="" name="date4" class="date-picker form-control" id="date4" 
+            placeholder="Loan तिर्ने अन्तिम भुक्तानी मिति छान्नुहाेस">
+           <span id="convert4" style="cursor: pointer;">Convert4 => Loan तिर्ने अन्तिम भुक्तानी मिति</span>
+        </div>
+    </div>
+    <div class="containerd3">
+      <span id="x2date"></span><span id="y2date"></span> 
+    </div>
+   </tbody>
+    </table>
+</div>
+
+<select name="iwe" id="iwe" style="text-align: right;">
+    <option value="i1">म</option>
+    <option value="i2">हामि</option>
+  </select>
+
+  लाई
+
+  <select name="lwtype" id="loanWork" style="text-align: center;">
+     </select>
+            
+            कार्य गर्नका लागि
+            <select name="ltype" id="ltype" style="text-align: center;">
+                            </select>
+
+        कर्जा शिर्षकमा रु. <div id="output2"></div><div id="karjaSlash"> <b>/-</b></div> &nbsp;
+            <span id="convert1" style="cursor: pointer;" onclick="convertKarja(1)">कर्जाको </span>
+    <span id="convert2" style="cursor: pointer;" onclick="convertKarja(2)">आवश्यकता </span>
+    <span id="slashremove" style="cursor: pointer;" onclick="convertKarja(3)"> परेको </span>
+
+    हुँदा उक्त  कर्जा पाऊँ भनि  यो आवेदन  पेश गरेको
+      <select name="chhu" id="chhu">
+        <option value="1">छु</option>
+        <option value="2">छाैं</option>
+      </select>
+      । <br></br>
        
 
     <script type="module" src="app.js"></script> <br><br><br><br>

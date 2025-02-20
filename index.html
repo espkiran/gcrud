@@ -16,9 +16,62 @@
 <script type="text/javascript" src="./src/jquery.nepaliDatePicker.js"></script>
 <!-- <script type="text/javascript" src="app1.js"></script> -->
 <!-- <script type="text/javascript" src="app.js"></script> -->
+
+
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
+  <div class="container">
+    <h1>User Management</h1>
+
+    <!-- User Form -->
+    <form id="userForm">
+      <input type="hidden" id="userId"> <!-- Hidden field for user ID -->
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label for="age">Age:</label>
+        <input type="number" id="age" required>
+      </div>
+      <button type="submit" id="submitButton">Submit</button>
+    </form>
+
+    <hr>
+
+    <!-- Dropdown List -->
+    <h2>Select User</h2>
+    <select id="userDropdown">
+      <option value="">Select a user...</option>
+    </select>
+
+    <hr>
+
+    <!-- Users Table -->
+    <h2>Users List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersList"></tbody>
+    </table>
+  </div>
+
+  <!-- Import Firebase SDK -->
+
+
+
     
     
     <form id="save-later-form" method="post">
@@ -75,8 +128,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
     
     <!-- Custom JS -->
-    <script src="app1.js"></script>
+<!--     <script src="app1.js"></script> -->
+  <script type="module" src="app.js"></script>
+    
      <script type="text/javascript" src="grmrscript.js"></script>
     <script type="text/javascript" src="jserialscript.js"></script>
 </body>
 </html>
+
+

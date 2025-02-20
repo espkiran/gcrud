@@ -1,15 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-  onSnapshot,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-// Initialize Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
     authDomain: "mywebform-81b01.firebaseapp.com",

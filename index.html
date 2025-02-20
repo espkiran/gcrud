@@ -24,6 +24,8 @@
   <div class="container">
     <h1>User Management</h1>
 
+
+      
     <!-- User Form -->
     <form id="userForm">
       <input type="hidden" id="userId"> <!-- Hidden field for user ID -->
@@ -70,7 +72,30 @@
 
   <!-- Import Firebase SDK -->
 
+<!-- Dropdown List -->
+    <h2>Select User</h2>
+    <select id="userDropdown" class="form-select mb-3"></select>
 
+    <hr>
+
+    <!-- Users Table -->
+    <h2>Users List</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersList"></tbody>
+    </table>
+  </div>
+
+  <!-- Import Firebase SDK -->
+  <script type="module" src="app.js"></script>
 
     
     

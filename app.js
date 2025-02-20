@@ -1,41 +1,30 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
-  getFirestore,
-  collection,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-  onSnapshot
+    getFirestore,
+    collection,
+    addDoc,
+    doc,
+    updateDoc,
+    deleteDoc,
+    onSnapshot,
+    serverTimestamp,
+    getDoc,
+    setDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
-  authDomain: "mywebform-81b01.firebaseapp.com",
-  projectId: "mywebform-81b01",
-  storageBucket: "mywebform-81b01.firebasestorage.app",
-  messagingSenderId: "284178824887",
-  appId: "1:284178824887:web:b34bd1bd101aa67404d732"
+    apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
+    authDomain: "mywebform-81b01.firebaseapp.com",
+    projectId: "mywebform-81b01",
+    storageBucket: "mywebform-81b01.firebasestorage.app",
+    messagingSenderId: "284178824887",
+    appId: "1:284178824887:web:b34bd1bd101aa67404d732"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-let currentEditId = null;
 
-
-// const firebaseConfig = {
-//     apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
-//     authDomain: "mywebform-81b01.firebaseapp.com",
-//     projectId: "mywebform-81b01",
-//     storageBucket: "mywebform-81b01.firebasestorage.app",
-//     messagingSenderId: "284178824887",
-//     appId: "1:284178824887:web:b34bd1bd101aa67404d732"
-// };
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// Initialize date pickers
+// Initialize date pickers (Assuming you have a Datepicker library)
 document.addEventListener('DOMContentLoaded', function() {
     const dateInputs = document.querySelectorAll('.date-picker');
     dateInputs.forEach(input => {
@@ -72,7 +61,7 @@ function getFormData() {
         loanWork: document.getElementById('loanWork').value,
         ltype: document.getElementById('ltype').value,
         chhu: document.getElementById('chhu').value,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        timestamp: serverTimestamp()
     };
 }
 
@@ -97,12 +86,12 @@ function populateForm(data) {
 // Create
 document.getElementById('save-later-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     try {
         const formData = getFormData();
         formData.recordId = generateUniqueId();
-        
-        await db.collection('loans').doc(formData.recordId).set(formData);
+
+        await setDoc(doc(db, 'loans', formData.recordId), formData);
         document.getElementById('recordId').textContent = formData.recordId;
         alert('Record saved successfully! Record ID: ' + formData.recordId);
     } catch (error) {
@@ -117,9 +106,9 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
     if (!searchId) return;
 
     try {
-        const doc = await db.collection('loans').doc(searchId).get();
-        if (doc.exists) {
-            populateForm(doc.data());
+        const docSnap = await getDoc(doc(db, 'loans', searchId));
+        if (docSnap.exists()) {
+            populateForm(docSnap.data());
         } else {
             alert('No record found with ID: ' + searchId);
         }
@@ -139,7 +128,7 @@ document.getElementById('updateBtn').addEventListener('click', async () => {
 
     try {
         const formData = getFormData();
-        await db.collection('loans').doc(currentId).update(formData);
+        await updateDoc(doc(db, 'loans', currentId), formData);
         alert('Record updated successfully!');
     } catch (error) {
         console.error('Error updating record:', error);
@@ -157,7 +146,7 @@ document.getElementById('deleteBtn').addEventListener('click', async () => {
 
     if (confirm('Are you sure you want to delete this record?')) {
         try {
-            await db.collection('loans').doc(currentId).delete();
+            await deleteDoc(doc(db, 'loans', currentId));
             alert('Record deleted successfully!');
             document.getElementById('save-later-form').reset();
             document.getElementById('recordId').textContent = 'Not Generated';
@@ -173,7 +162,7 @@ document.querySelectorAll('[id^="convert"]').forEach(button => {
     button.addEventListener('click', function() {
         const dateId = this.id.replace('convert', '');
         const dateInput = document.getElementById('date' + dateId);
-        // Add your date conversion logic here
-        console.log('Converting date:', dateInput.value);
+        // Add your date conversion logic here.
+        alert("convert button pressed for " + dateInput.value)
     });
 });

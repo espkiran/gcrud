@@ -1,168 +1,125 @@
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
-    getFirestore,
-    collection,
-    addDoc,
-    doc,
-    updateDoc,
-    deleteDoc,
-    onSnapshot,
-    serverTimestamp,
-    getDoc,
-    setDoc
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  getDoc,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+// Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
-    authDomain: "mywebform-81b01.firebaseapp.com",
-    projectId: "mywebform-81b01",
-    storageBucket: "mywebform-81b01.firebasestorage.app",
-    messagingSenderId: "284178824887",
-    appId: "1:284178824887:web:b34bd1bd101aa67404d732"
+  apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
+  authDomain: "mywebform-81b01.firebaseapp.com",
+  projectId: "mywebform-81b01",
+  storageBucket: "mywebform-81b01.firebasestorage.app",
+  messagingSenderId: "284178824887",
+  appId: "1:284178824887:web:b34bd1bd101aa67404d732"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore
 const db = getFirestore(app);
 
-// Initialize date pickers (Assuming you have a Datepicker library)
-document.addEventListener('DOMContentLoaded', function() {
-    const dateInputs = document.querySelectorAll('.date-picker');
-    dateInputs.forEach(input => {
-        new Datepicker(input, {
-            format: 'yyyy-mm-dd'
-        });
+// Form Submit Handler
+document.getElementById('userForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const age = document.getElementById('age').value;
+  const userId = document.getElementById('userId').value;
+
+  try {
+    if (userId) {
+      // Update existing user
+      await updateDoc(doc(db, 'users', userId), { name, email, age });
+    } else {
+      // Create new user
+      await addDoc(collection(db, 'users'), { name, email, age });
+    }
+    resetForm();
+    loadUsers(); // Reload the users list
+  } catch (error) {
+    console.error("Error saving data:", error);
+    alert("Error saving data. Check console for details.");
+  }
+});
+
+// Read Data (Realtime Listener)
+function loadUsers() {
+  const usersCollection = collection(db, 'users');
+  onSnapshot(usersCollection, (snapshot) => {
+    let html = '';
+    snapshot.forEach((doc) => {
+      const user = doc.data();
+      html += `
+        <tr>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.age}</td>
+          <td>
+            <button onclick="editUser('${doc.id}')" class="btn btn-sm btn-warning">Edit</button>
+            <button onclick="deleteUser('${doc.id}')" class="btn btn-sm btn-danger">Delete</button>
+          </td>
+        </tr>
+      `;
     });
-});
+    document.getElementById('usersList').innerHTML = html;
+  });
+}
 
-// Utility Functions
-function limitInputLength(element, maxLength) {
-    if (element.value.length > maxLength) {
-        element.value = element.value.slice(0, maxLength);
+// Edit User
+async function editUser(id) {
+  console.log("Editing user with ID:", id); // Debugging line
+  try {
+    const userDoc = doc(db, 'users', id);
+    const docSnap = await getDoc(userDoc);
+    if (docSnap.exists()) {
+      const user = docSnap.data();
+      document.getElementById('userId').value = id;
+      document.getElementById('name').value = user.name || '';
+      document.getElementById('email').value = user.email || '';
+      document.getElementById('age').value = user.age || '';
+    } else {
+      console.error("User document does not exist.");
+      alert("Error: User not found.");
     }
+  } catch (error) {
+    console.error("Error editing user:", error);
+    alert("Error loading user data. Check console for details.");
+  }
 }
 
-function generateUniqueId() {
-    return 'LOAN_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-}
-
-// Form Data Collection
-function getFormData() {
-    return {
-        recordId: document.getElementById('recordId').textContent,
-        tcsh: document.getElementById('tcsh').value,
-        aQmob: document.getElementById('aQmob').value,
-        Lper: document.getElementById('Lper').value,
-        Qno: document.getElementById('Qno').value,
-        date1: document.getElementById('date1').value,
-        date2: document.getElementById('date2').value,
-        date3: document.getElementById('date3').value,
-        date4: document.getElementById('date4').value,
-        iwe: document.getElementById('iwe').value,
-        loanWork: document.getElementById('loanWork').value,
-        ltype: document.getElementById('ltype').value,
-        chhu: document.getElementById('chhu').value,
-        timestamp: serverTimestamp()
-    };
-}
-
-// Form Population
-function populateForm(data) {
-    document.getElementById('recordId').textContent = data.recordId;
-    document.getElementById('tcsh').value = data.tcsh;
-    document.getElementById('aQmob').value = data.aQmob;
-    document.getElementById('Lper').value = data.Lper;
-    document.getElementById('Qno').value = data.Qno;
-    document.getElementById('date1').value = data.date1;
-    document.getElementById('date2').value = data.date2;
-    document.getElementById('date3').value = data.date3;
-    document.getElementById('date4').value = data.date4;
-    document.getElementById('iwe').value = data.iwe;
-    document.getElementById('loanWork').value = data.loanWork;
-    document.getElementById('ltype').value = data.ltype;
-    document.getElementById('chhu').value = data.chhu;
-}
-
-// CRUD Operations
-// Create
-document.getElementById('save-later-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
+// Delete User
+async function deleteUser(id) {
+  console.log("Deleting user with ID:", id); // Debugging line
+  if (confirm('Are you sure?')) {
     try {
-        const formData = getFormData();
-        formData.recordId = generateUniqueId();
-
-        await setDoc(doc(db, 'loans', formData.recordId), formData);
-        document.getElementById('recordId').textContent = formData.recordId;
-        alert('Record saved successfully! Record ID: ' + formData.recordId);
+      const userDoc = doc(db, 'users', id);
+      await deleteDoc(userDoc);
+      loadUsers(); // Reload the users list
     } catch (error) {
-        console.error('Error saving record:', error);
-        alert('Error saving record: ' + error.message);
+      console.error("Error deleting user:", error);
+      alert("Error deleting user. Check console for details.");
     }
-});
+  }
+}
 
-// Read
-document.getElementById('searchBtn').addEventListener('click', async () => {
-    const searchId = prompt('Enter Record ID:');
-    if (!searchId) return;
+// Reset Form
+function resetForm() {
+  document.getElementById('userId').value = '';
+  document.getElementById('userForm').reset();
+}
 
-    try {
-        const docSnap = await getDoc(doc(db, 'loans', searchId));
-        if (docSnap.exists()) {
-            populateForm(docSnap.data());
-        } else {
-            alert('No record found with ID: ' + searchId);
-        }
-    } catch (error) {
-        console.error('Error searching record:', error);
-        alert('Error searching record: ' + error.message);
-    }
-});
+// Initial Load
+loadUsers();
 
-// Update
-document.getElementById('updateBtn').addEventListener('click', async () => {
-    const currentId = document.getElementById('recordId').textContent;
-    if (currentId === 'Not Generated') {
-        alert('Please load a record first');
-        return;
-    }
-
-    try {
-        const formData = getFormData();
-        await updateDoc(doc(db, 'loans', currentId), formData);
-        alert('Record updated successfully!');
-    } catch (error) {
-        console.error('Error updating record:', error);
-        alert('Error updating record: ' + error.message);
-    }
-});
-
-// Delete
-document.getElementById('deleteBtn').addEventListener('click', async () => {
-    const currentId = document.getElementById('recordId').textContent;
-    if (currentId === 'Not Generated') {
-        alert('Please load a record first');
-        return;
-    }
-
-    if (confirm('Are you sure you want to delete this record?')) {
-        try {
-            await deleteDoc(doc(db, 'loans', currentId));
-            alert('Record deleted successfully!');
-            document.getElementById('save-later-form').reset();
-            document.getElementById('recordId').textContent = 'Not Generated';
-        } catch (error) {
-            console.error('Error deleting record:', error);
-            alert('Error deleting record: ' + error.message);
-        }
-    }
-});
-
-// Convert buttons functionality
-document.querySelectorAll('[id^="convert"]').forEach(button => {
-    button.addEventListener('click', function() {
-        const dateId = this.id.replace('convert', '');
-        const dateInput = document.getElementById('date' + dateId);
-        // Add your date conversion logic here.
-        alert("convert button pressed for " + dateInput.value)
-    });
-});
+// Expose functions to global scope
+window.editUser = editUser;
+window.deleteUser = deleteUser;

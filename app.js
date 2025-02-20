@@ -53,25 +53,32 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
 function loadUsers() {
   const usersCollection = collection(db, 'users');
   onSnapshot(usersCollection, (snapshot) => {
-    let html = '';
-    let dropdownHtml = '<option value="">Select a user...</option>';
+    let tableHtml = ''; // HTML for the table
+    let dropdownHtml = '<option value="">Select a user...</option>'; // HTML for the dropdown
+
     snapshot.forEach((doc) => {
       const user = doc.data();
-      html += `
+
+      // Add user to the table
+      tableHtml += `
         <tr>
           <td>${doc.id}</td>
           <td>${user.name}</td>
           <td>${user.email}</td>
           <td>${user.age}</td>
           <td>
-            <button onclick="editUser('${doc.id}')" class="btn">Edit</button>
-            <button onclick="deleteUser('${doc.id}')" class="btn">Delete</button>
+            <button onclick="editUser('${doc.id}')" class="btn btn-warning">Edit</button>
+            <button onclick="deleteUser('${doc.id}')" class="btn btn-danger">Delete</button>
           </td>
         </tr>
       `;
+
+      // Add user to the dropdown
       dropdownHtml += `<option value="${doc.id}">${user.name} (${doc.id})</option>`;
     });
-    document.getElementById('usersList').innerHTML = html;
+
+    // Update the table and dropdown in the DOM
+    document.getElementById('usersList').innerHTML = tableHtml;
     document.getElementById('userDropdown').innerHTML = dropdownHtml;
   });
 }
@@ -102,7 +109,7 @@ async function deleteUser(id) {
   if (confirm('Are you sure?')) {
     try {
       await deleteDoc(doc(db, 'users', id));
-      loadUsers();
+      loadUsers(); // Reload users after deletion
     } catch (error) {
       console.error("Error deleting user:", error);
       alert("Error deleting user. Check console for details.");
@@ -120,7 +127,7 @@ function resetForm() {
 document.getElementById('userDropdown').addEventListener('change', (e) => {
   const selectedUserId = e.target.value;
   if (selectedUserId) {
-    editUser(selectedUserId);
+    editUser(selectedUserId); // Populate form fields when a user is selected
   }
 });
 

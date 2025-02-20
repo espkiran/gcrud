@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Management System</title>
-    <link rel="stylesheet" href="styles.css">
-   <link rel="stylesheet" href="growm.css" />
+    <title>User Registration Form</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="growm.css" />
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <link rel="stylesheet" href="mboot.css">
     <link rel="stylesheet" href="nepaliDatePicker.css">
@@ -14,117 +14,119 @@
 <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="./src/nepaliDatePicker.css">
 <script type="text/javascript" src="./src/jquery.nepaliDatePicker.js"></script>
-<!-- <script type="text/javascript" src="app.js"></script> -->
-    
-    
-    <!-- Date picker CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css">
+<script type="text/javascript" src="app1.js"></script>
 </head>
 <body>
-    <div class="container">
-        <form id="save-later-form" method="post">
-            <div class="record-id">
-                Record ID: <span id="recordId">Not Generated</span>
+  
+    
+    
+    <form id="save-later-form" method="post">
+        <div class="container">
+        <h1>User Registration Form</h1>
+       
+        <input type="hidden" id="userId">
+             <div class="item items1">
+        <img src="logo.jpg" alt="" width="122px" />
+      </div>
+      <div class="item items2">
+        <header>"आश्रय नेपालका सदस्यहरुद्वारा प्रवर्ध्दित"</header>
+        <subheader>ग्रोमोर बचत तथा ऋण सहकारी संस्था लिमिटेड</subheader> <br />
+        <subtext>पो. ब. नं. १३१८४, टोखा ९, गोंगबु, काठमाडौं, फोन ०१-५९०३६६६</subtext>
+      </div>
+      <div class="item items3">कर्जा आवेदन फारम </div>
+      <div class="item items4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="svg">
+          <g>
+            <rect x="5" y="5" rx="30" ry="20" width="111" height="140" fill="transparent" style="
+                  fill: rgb(246, 224, 224);
+                  stroke: black;
+                  stroke-width: 3;
+                  opacity: 0.5;
+                "></rect>
+            <text x="10" y="90" font-family="Verdana" font-size="45" fill="blue">
+              फोटो
+            </text>
+          </g>
+        </svg>
+      </div>
+      <div class="item items5">
+        श्रीमान् प्रबन्ध निर्देशक ज्यु <br />
+        ग्रोमोर बचत तथा ऋण सहकारी संस्था लि. <br />
+        टोखा -९, गोंगबु, काठमाडौं। <br />
+        महोदय, <br /></br>
+      </div>
+        
+        <!-- Search Section -->
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Search by name or mobile...">
+            <select id="userDropdown">
+                <option value="">Select a user to edit</option>
+            </select>
+        </div>
+
+        <!-- User Form -->
+        <form id="userForm">
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" required>
             </div>
 
-            <input type="hidden" name="user_id" id="user_id" value="">
-
-            <div id="karjaSection">
-                <div class="form-group">
-                    <label for="tcsh">Total Cash Amount:</label>
-                    <input type="number" id="tcsh" placeholder="0" oninput="limitInputLength(this, 9)" required style="font-size: 40px;">
-                </div>
-
-                <div class="form-group">
-                    <span id="umob"></span> <span id="smob"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="aQmob">Amount:</label>
-                    <input type="number" id="aQmob" placeholder="0" oninput="limitInputLength(this, 35)" required style="font-size: 40px;">
-                </div>
-
-                <div class="form-group">
-                    <label for="Lper">Loan Percentage:</label>
-                    <input type="number" id="Lper" placeholder="0" oninput="limitInputLength(this, 5)" required style="font-size: 40px;">
-                </div>
-
-                <div class="form-group">
-                    <label for="Qno">Queue Number:</label>
-                    <input type="text" id="Qno" oninput="limitInputLength(this, 35)" style="font-size: 40px;">
-                </div>
-
-                <div class="date-section">
-                    <div class="form-group">
-                        <label for="date1">Loan Issue/Renew Date:</label>
-                        <input type="text" value="" name="date1" class="date-picker form-control" id="date1" placeholder="Loan Issue वा Renew गरेकाे मिति छान्नुहाेस">
-                        <span id="convert1" class="convert-btn">Convert1 => Loan Issue वा Renew गरेकाे मिति</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="date2">Second Date:</label>
-                        <input type="text" value="" name="date2" class="date-picker form-control" id="date2" placeholder="Loan Issue वा Renew गरेकाे मिति छान्नुहाेस">
-                        <span id="convert2" class="convert-btn">Convert2 => Loan Issue वा Renew गरेकाे मिति</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="date3">Account Opening Date:</label>
-                        <input type="text" value="" name="date3" class="date-picker form-control" id="date3" placeholder="बचत खाता खाेलेकाे मिति वा खाता बनेकाे मिति छान्नुहाेस">
-                        <span id="convert3" class="convert-btn">Convert3 => बचत खाता खाेलेकाे मिति</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="date4">Last Payment Date:</label>
-                        <input type="text" value="" name="date4" class="date-picker form-control" id="date4" placeholder="Loan तिर्ने अन्तिम भुक्तानी मिति छान्नुहाेस">
-                        <span id="convert4" class="convert-btn">Convert4 => Last Payment Date</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="iwe">Selection:</label>
-                    <select name="iwe" id="iwe" style="text-align: right;">
-                        <option value="i1">म</option>
-                        <option value="i2">हामि</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="loanWork">Loan Work Type:</label>
-                    <select name="lwtype" id="loanWork" style="text-align: center;">
-                        <option value="type1">Type 1</option>
-                        <option value="type2">Type 2</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="ltype">Loan Type:</label>
-                    <select name="ltype" id="ltype" style="text-align: center;">
-                        <option value="type1">Type 1</option>
-                        <option value="type2">Type 2</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <div id="output2"></div>
-                    <div id="karjaSlash"><b>/-</b></div>
-                </div>
-
-                <div class="form-group">
-                    <select name="chhu" id="chhu">
-                        <option value="1">छु</option>
-                        <option value="2">छाैं</option>
-                    </select>
-                </div>
+            <div class="form-group">       
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
             </div>
 
-            <div class="button-group">
-                <button type="submit" id="saveBtn">Save</button>
-                <button type="button" id="updateBtn">Update</button>
-                <button type="button" id="deleteBtn">Delete</button>
-                <button type="button" id="searchBtn">Search</button>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" required>
             </div>
+
+            <div class="form-group">
+                <label for="mobile">Mobile Number:</label>
+                <input type="tel" id="mobile" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea id="address" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="income">Monthly Income (NPR):</label>
+                <input type="number" id="income" required>
+            </div>
+
+            <div class="form-group">
+                <label for="country">Country:</label>
+                <select id="country" required>
+                    <option value="">Select Country</option>
+                    <option value="Nepal">Nepal</option>
+                    <option value="India">India</option>
+                    <option value="China">China</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="city">City (Nepal):</label>
+                <select id="city" required>
+                    <option value="">Select City</option>
+                    <option value="Kathmandu">Kathmandu</option>
+                    <option value="Pokhara">Pokhara</option>
+                    <option value="Lalitpur">Lalitpur</option>
+                    <option value="Bharatpur">Bharatpur</option>
+                    <option value="Birgunj">Birgunj</option>
+                </select>
+            </div>
+
+            <button type="submit">Submit</button>
         </form>
+
+        <h2>Registered Users</h2>
+        <div id="usersList"></div>
     </div>
+
+    <script type="module" src="app.js"></script>
+
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>

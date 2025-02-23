@@ -1,105 +1,99 @@
+// Modified app.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { 
   getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, getDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
-  authDomain: "mywebform-81b01.firebaseapp.com",
-  projectId: "mywebform-81b01",
-  storageBucket: "mywebform-81b01.firebasestorage.app",
-  messagingSenderId: "284178824887",
-  appId: "1:284178824887:web:b34bd1bd101aa67404d732"
-};
-
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const loanAppsRef = collection(db, 'loanApplications');
 
+// Firestore will auto-create the 'loanApplications' collection on first write
+const loanAppsRef = collection(db, 'loanApplications');
 let currentDocId = null;
 
-// Debounce function to limit save rate
-const debounce = (func, delay) => {
-  let timeoutId;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(this, args), delay);
-  };
-};
-
-// Get all form data
-const getFormData = () => {
-  const inputs = document.querySelectorAll('input, select, textarea');
-  const data = {};
-  inputs.forEach(input => {
-    data[input.id] = input.value;
-  });
+// Enhanced form handling
+const formElements = () => document.querySelectorAll('input, select, textarea');
+const getFormData = () => Array.from(formElements()).reduce((data, el) => {
+  data[el.id] = el.value;
   return data;
-};
+}, {});
 
-// Save/Update document
-const saveData = debounce(async () => {
+// Save/Update with explicit button
+document.getElementById('saveBtn').addEventListener('click', async () => {
   const data = getFormData();
   try {
     if (currentDocId) {
       await updateDoc(doc(db, 'loanApplications', currentDocId), data);
+      console.log('Document updated');
     } else {
       const docRef = await addDoc(loanAppsRef, { 
-        ...data, 
+        ...data,
         createdAt: serverTimestamp() 
       });
       currentDocId = docRef.id;
+      console.log('Document added');
     }
   } catch (error) {
-    console.error("Error saving document: ", error);
+    console.error("Error saving: ", error);
   }
-}, 1000);
-
-// Add event listeners to all form elements
-document.querySelectorAll('input, select, textarea').forEach(element => {
-  element.addEventListener('input', saveData);
 });
 
-// Load data into form for editing
-window.loadData = async (docId) => {
+// New Application
+document.getElementById('newBtn').addEventListener('click', () => {
+  currentDocId = null;
+  formElements().forEach(el => el.value = '');
+});
+
+// Clear Form
+document.getElementById('clearBtn').addEventListener('click', () => {
+  formElements().forEach(el => el.value = '');
+});
+
+// Delete handler
+window.deleteRecord = async (docId) => {
+  if (confirm('Delete this application?')) {
+    await deleteDoc(doc(db, 'loanApplications', docId));
+    if (currentDocId === docId) currentDocId = null;
+  }
+};
+
+// Edit handler
+window.editRecord = async (docId) => {
   const docSnap = await getDoc(doc(db, 'loanApplications', docId));
   if (docSnap.exists()) {
     const data = docSnap.data();
-    Object.keys(data).forEach(key => {
-      const element = document.getElementById(key);
-      if (element) element.value = data[key];
+    formElements().forEach(el => {
+      if (data[el.id]) el.value = data[el.id];
     });
     currentDocId = docId;
   }
 };
 
-// Delete document
-window.deleteData = async (docId) => {
-  await deleteDoc(doc(db, 'loanApplications', docId));
-  if (currentDocId === docId) currentDocId = null;
-};
-
-// Display records list
-const displayRecords = (docs) => {
-  const recordsList = document.getElementById('recordsList');
-  recordsList.innerHTML = docs.map(doc => `
-    <div class="record-item">
-      <span>${doc.data().fname} - रु ${doc.data().tcsh || '0'}</span>
-      <button onclick="loadData('${doc.id}')">Edit</button>
-      <button onclick="deleteData('${doc.id}')">Delete</button>
-    </div>
-  `).join('');
-};
-
-// Real-time updates listener
+// Real-time display
 onSnapshot(loanAppsRef, (snapshot) => {
-  const docs = [];
-  snapshot.forEach(doc => docs.push(doc));
-  displayRecords(docs);
+  const recordsList = document.getElementById('recordsList');
+  recordsList.innerHTML = '<h3>Saved Applications:</h3>';
+  
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const record = document.createElement('div');
+    record.className = 'record-item';
+    record.innerHTML = `
+      <span>${data.fname || 'Unnamed'} - रु ${data.tcsh || '0'} (${new Date(data.createdAt?.toDate()).toLocaleDateString()})</span>
+      <div>
+        <button onclick="editRecord('${doc.id}')">Edit</button>
+        <button onclick="deleteRecord('${doc.id}')">Delete</button>
+      </div>
+    `;
+    recordsList.appendChild(record);
+  });
 });
 
-// Initialize
-window.newRecord = () => {
-  currentDocId = null;
-  document.querySelectorAll('input, select, textarea').forEach(el => el.value = '');
-};
+// Auto-save on changes (every 2 seconds)
+setInterval(() => {
+  if (currentDocId) {
+    const data = getFormData();
+    updateDoc(doc(db, 'loanApplications', currentDocId), data);
+  }
+}, 2000);

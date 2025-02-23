@@ -1,99 +1,127 @@
-// Modified app.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { 
   getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, getDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",
+  authDomain: "mywebform-81b01.firebaseapp.com",
+  projectId: "mywebform-81b01",
+  storageBucket: "mywebform-81b01.firebasestorage.app",
+  messagingSenderId: "284178824887",
+  appId: "1:284178824887:web:b34bd1bd101aa67404d732"
+};
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-// Firestore will auto-create the 'loanApplications' collection on first write
 const loanAppsRef = collection(db, 'loanApplications');
 let currentDocId = null;
 
-// Enhanced form handling
-const formElements = () => document.querySelectorAll('input, select, textarea');
-const getFormData = () => Array.from(formElements()).reduce((data, el) => {
-  data[el.id] = el.value;
-  return data;
-}, {});
+// Error handling function
+const handleFirebaseError = (error) => {
+  console.error('Firebase Error:', error);
+  alert(`Error: ${error.message || 'Check console for details'}`);
+};
 
-// Save/Update with explicit button
+// Get form data with validation
+const getFormData = () => {
+  const data = {};
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    data[el.id] = el.value || null;
+  });
+  return data;
+};
+
+// Save/Update document
 document.getElementById('saveBtn').addEventListener('click', async () => {
-  const data = getFormData();
   try {
+    const data = getFormData();
+    
+    if (!data.fname || !data.tcsh) {
+      alert('Name and Loan Amount are required!');
+      return;
+    }
+
     if (currentDocId) {
       await updateDoc(doc(db, 'loanApplications', currentDocId), data);
-      console.log('Document updated');
+      alert('Document updated successfully!');
     } else {
-      const docRef = await addDoc(loanAppsRef, { 
+      const docRef = await addDoc(loanAppsRef, {
         ...data,
-        createdAt: serverTimestamp() 
+        createdAt: serverTimestamp()
       });
       currentDocId = docRef.id;
-      console.log('Document added');
+      alert('Document saved successfully!');
     }
   } catch (error) {
-    console.error("Error saving: ", error);
+    handleFirebaseError(error);
   }
 });
 
-// New Application
-document.getElementById('newBtn').addEventListener('click', () => {
-  currentDocId = null;
-  formElements().forEach(el => el.value = '');
-});
-
-// Clear Form
-document.getElementById('clearBtn').addEventListener('click', () => {
-  formElements().forEach(el => el.value = '');
-});
-
-// Delete handler
+// Delete handler with confirmation
 window.deleteRecord = async (docId) => {
-  if (confirm('Delete this application?')) {
-    await deleteDoc(doc(db, 'loanApplications', docId));
-    if (currentDocId === docId) currentDocId = null;
+  if (confirm('Are you sure you want to delete this record?')) {
+    try {
+      await deleteDoc(doc(db, 'loanApplications', docId));
+      if (currentDocId === docId) currentDocId = null;
+      alert('Document deleted successfully!');
+    } catch (error) {
+      handleFirebaseError(error);
+    }
   }
 };
 
 // Edit handler
 window.editRecord = async (docId) => {
-  const docSnap = await getDoc(doc(db, 'loanApplications', docId));
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    formElements().forEach(el => {
-      if (data[el.id]) el.value = data[el.id];
-    });
-    currentDocId = docId;
+  try {
+    const docSnap = await getDoc(doc(db, 'loanApplications', docId));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      Object.entries(data).forEach(([key, value]) => {
+        const el = document.getElementById(key);
+        if (el) el.value = value || '';
+      });
+      currentDocId = docId;
+      alert('Document loaded for editing!');
+    }
+  } catch (error) {
+    handleFirebaseError(error);
   }
 };
 
-// Real-time display
-onSnapshot(loanAppsRef, (snapshot) => {
-  const recordsList = document.getElementById('recordsList');
-  recordsList.innerHTML = '<h3>Saved Applications:</h3>';
-  
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const record = document.createElement('div');
-    record.className = 'record-item';
-    record.innerHTML = `
-      <span>${data.fname || 'Unnamed'} - रु ${data.tcsh || '0'} (${new Date(data.createdAt?.toDate()).toLocaleDateString()})</span>
-      <div>
-        <button onclick="editRecord('${doc.id}')">Edit</button>
-        <button onclick="deleteRecord('${doc.id}')">Delete</button>
-      </div>
-    `;
-    recordsList.appendChild(record);
+// Real-time listener with error handling
+try {
+  onSnapshot(loanAppsRef, (snapshot) => {
+    const recordsList = document.getElementById('recordsList');
+    recordsList.innerHTML = '<h3>Saved Applications:</h3>';
+    
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const record = document.createElement('div');
+      record.className = 'record-item';
+      record.innerHTML = `
+        <div>
+          <strong>${data.fname || 'Unnamed Application'}</strong><br>
+          Amount: रु ${data.tcsh || '0'} | 
+          Created: ${data.createdAt?.toDate().toLocaleDateString()}
+        </div>
+        <div>
+          <button onclick="editRecord('${doc.id}')">Edit</button>
+          <button onclick="deleteRecord('${doc.id}')">Delete</button>
+        </div>
+      `;
+      recordsList.appendChild(record);
+    });
   });
-});
+} catch (error) {
+  handleFirebaseError(error);
+}
 
-// Auto-save on changes (every 2 seconds)
-setInterval(() => {
-  if (currentDocId) {
-    const data = getFormData();
-    updateDoc(doc(db, 'loanApplications', currentDocId), data);
-  }
-}, 2000);
+// Initialize form
+window.newRecord = () => {
+  currentDocId = null;
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.value = '';
+  });
+  alert('New form initialized!');
+};

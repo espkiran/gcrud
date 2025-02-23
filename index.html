@@ -83,16 +83,20 @@
               <td colspan="3" style="font-size: 40px;">
     <span id="convert" class="custom-button">Convert</span>
 
-    <div id="recordsList" style="margin-top: 20px;">
-      <h3>Existing Applications:</h3>
-      <!-- Records will be auto-populated here -->
-    </div>
-    <button onclick="newRecord()" style="margin: 10px 0;">Start New Application</button>
-    
-    <!-- Add this section below your form to display records -->
-<!-- <div class="records-container">
-  <h2>Saved Loan Applications</h2>
-  <div id="recordsList"></div> -->
+
+                
+<!-- Add this HTML below your existing "Convert" button -->
+<div id="controls" style="margin: 20px 0;">
+  <button id="saveBtn">Save Now</button>
+  <button id="newBtn">New Application</button>
+  <button id="clearBtn">Clear Form</button>
+</div>
+
+<div id="recordsList">
+  <h3>Saved Applications:</h3>
+  <!-- Records will appear here -->
+</div>
+                
 </div>
 </td>
             </tr>

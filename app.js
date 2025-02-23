@@ -17,111 +17,88 @@ const db = getFirestore(app);
 const loanAppsRef = collection(db, 'loanApplications');
 let currentDocId = null;
 
-// Error handling function
-const handleFirebaseError = (error) => {
-  console.error('Firebase Error:', error);
-  alert(`Error: ${error.message || 'Check console for details'}`);
-};
-
-// Get form data with validation
+// Get all form data (including partial)
 const getFormData = () => {
   const data = {};
-  document.querySelectorAll('input, select, textarea').forEach(el => {
-    data[el.id] = el.value || null;
+  document.querySelectorAll('input, select, textarea').forEach(input => {
+    data[input.id] = input.value || '';
   });
   return data;
 };
 
-// Save/Update document
+// Save/Update button handler
 document.getElementById('saveBtn').addEventListener('click', async () => {
   try {
     const data = getFormData();
     
-    if (!data.fname || !data.tcsh) {
-      alert('Name and Loan Amount are required!');
-      return;
-    }
-
     if (currentDocId) {
+      // Update existing document
       await updateDoc(doc(db, 'loanApplications', currentDocId), data);
-      alert('Document updated successfully!');
+      alert('Updated successfully!');
     } else {
+      // Create new document
       const docRef = await addDoc(loanAppsRef, {
         ...data,
         createdAt: serverTimestamp()
       });
       currentDocId = docRef.id;
-      alert('Document saved successfully!');
+      alert('Saved successfully!');
     }
   } catch (error) {
-    handleFirebaseError(error);
+    console.error("Error saving:", error);
+    alert(`Error: ${error.message}`);
   }
 });
 
-// Delete handler with confirmation
-window.deleteRecord = async (docId) => {
-  if (confirm('Are you sure you want to delete this record?')) {
-    try {
-      await deleteDoc(doc(db, 'loanApplications', docId));
-      if (currentDocId === docId) currentDocId = null;
-      alert('Document deleted successfully!');
-    } catch (error) {
-      handleFirebaseError(error);
-    }
-  }
-};
-
-// Edit handler
-window.editRecord = async (docId) => {
-  try {
-    const docSnap = await getDoc(doc(db, 'loanApplications', docId));
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      Object.entries(data).forEach(([key, value]) => {
-        const el = document.getElementById(key);
-        if (el) el.value = value || '';
-      });
-      currentDocId = docId;
-      alert('Document loaded for editing!');
-    }
-  } catch (error) {
-    handleFirebaseError(error);
-  }
-};
-
-// Real-time listener with error handling
-try {
-  onSnapshot(loanAppsRef, (snapshot) => {
-    const recordsList = document.getElementById('recordsList');
-    recordsList.innerHTML = '<h3>Saved Applications:</h3>';
-    
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const record = document.createElement('div');
-      record.className = 'record-item';
-      record.innerHTML = `
-        <div>
-          <strong>${data.fname || 'Unnamed Application'}</strong><br>
-          Amount: रु ${data.tcsh || '0'} | 
-          Created: ${data.createdAt?.toDate().toLocaleDateString()}
-        </div>
-        <div>
-          <button onclick="editRecord('${doc.id}')">Edit</button>
-          <button onclick="deleteRecord('${doc.id}')">Delete</button>
-        </div>
-      `;
-      recordsList.appendChild(record);
+// Load data for editing
+window.loadData = async (docId) => {
+  const docSnap = await getDoc(doc(db, 'loanApplications', docId));
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    Object.entries(data).forEach(([field, value]) => {
+      const element = document.getElementById(field);
+      if (element) element.value = value;
     });
-  });
-} catch (error) {
-  handleFirebaseError(error);
-}
+    currentDocId = docId;
+  }
+};
 
-// Initialize form
-window.newRecord = () => {
+// Delete document
+window.deleteData = async (docId) => {
+  if (confirm('Delete this application?')) {
+    await deleteDoc(doc(db, 'loanApplications', docId));
+    if (currentDocId === docId) currentDocId = null;
+  }
+};
+
+// Real-time updates listener
+onSnapshot(loanAppsRef, (snapshot) => {
+  const recordsList = document.getElementById('recordsList');
+  recordsList.innerHTML = '<h3>Saved Applications:</h3>';
+  
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const record = document.createElement('div');
+    record.className = 'record-item';
+    record.innerHTML = `
+      <div>
+        ${data.fname || 'No Name'} - 
+        रु ${data.tcsh || '0'} - 
+        ${data.createdAt?.toDate().toLocaleDateString() || ''}
+      </div>
+      <div>
+        <button onclick="loadData('${doc.id}')">Edit</button>
+        <button onclick="deleteData('${doc.id}')">Delete</button>
+      </div>
+    `;
+    recordsList.appendChild(record);
+  });
+});
+
+// New Application button
+window.newApplication = () => {
   currentDocId = null;
   document.querySelectorAll('input, select, textarea').forEach(el => {
     el.value = '';
   });
-  alert('New form initialized!');
 };

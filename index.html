@@ -83,7 +83,15 @@
               <td colspan="3" style="font-size: 40px;">
     <span id="convert" class="custom-button">Convert</span>
 
-<div id="controls" style="margin: 20px 0; padding: 15px; background: #f5f5f5;">
+                <!-- Add this HTML -->
+<div id="controls">
+  <button id="saveBtn">Save Application</button>
+  <button onclick="newApplication()">New Application</button>
+</div>
+
+<div id="recordsList"></div>
+
+<!-- <div id="controls" style="margin: 20px 0; padding: 15px; background: #f5f5f5;">
   <button id="saveBtn" style="padding: 8px 20px; background: #4CAF50; color: white; border: none;">
     Save Application
   </button>
@@ -93,9 +101,9 @@
 </div>
 
 <div id="recordsList" style="margin-top: 20px; border-top: 2px solid #ddd; padding-top: 15px;">
-  <h3 style="color: #666;">Existing Applications:</h3>
+  <h3 style="color: #666;">Existing Applications:</h3> -->
   <!-- Records will appear here -->
-</div>
+<!-- </div> -->
                 
 <!-- Add this HTML below your existing "Convert" button -->
 <!-- <div id="controls" style="margin: 20px 0;">

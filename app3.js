@@ -1,8 +1,10 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
+// import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
+
 import {
     getFirestore, collection, addDoc, doc, updateDoc, deleteDoc,
     onSnapshot, getDoc, serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+} from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDjVs5MLZjh2iTHxy54WmyuoOf0kkjRpOA",

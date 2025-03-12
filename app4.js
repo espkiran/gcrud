@@ -3,7 +3,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebas
 
 import {
   getFirestore, collection, addDoc, doc, updateDoc, deleteDoc,
-  onSnapshot, getDoc, timestamp
+  onSnapshot, getDoc, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js';
 
 const firebaseConfig = {
